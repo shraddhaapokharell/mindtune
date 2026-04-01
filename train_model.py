@@ -28,7 +28,7 @@ from sklearn.utils import resample
 warnings.filterwarnings("ignore")
 
 # ─── CONFIG ───────────────────────────────────────────────────────────────────
-DATA_DIR     = "./training_data"
+DATA_DIR     = "./cleaned_data"
 MODEL_DIR    = "./model"
 BAND_COLS    = ["Delta", "Theta", "Low_Alpha", "High_Alpha",
                 "Low_Beta", "High_Beta", "Low_Gamma", "Mid_Gamma"]
