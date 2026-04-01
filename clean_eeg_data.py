@@ -8,8 +8,8 @@ import pandas as pd
 import os
 import re
 
-TRAINING_DIR = "/home/claude/training_data"
-CLEANED_DIR  = "/home/claude/cleaned_data"
+TRAINING_DIR = "training_data"
+CLEANED_DIR  = "cleaned_data"
 
 os.makedirs(CLEANED_DIR, exist_ok=True)
 
