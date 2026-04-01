@@ -1,0 +1,71 @@
+=================================================================
+  MindTune EEG Classifier — Training
+=================================================================
+  Loaded  mindtune_full_eeg_data_1_focus.csv             122 rows
+  Loaded  mindtune_full_eeg_data_1_relax.csv             266 rows
+  Loaded  mindtune_full_eeg_data_1_sudoku.csv            305 rows
+  Loaded  mindtune_full_eeg_data_2_focus.csv             353 rows
+  Loaded  mindtune_full_eeg_data_2_relax.csv             203 rows
+  Loaded  mindtune_full_eeg_data_2_sudoku.csv            213 rows
+
+  Total rows : 1462
+  Class counts:
+Mind_State
+sudoku    518
+focus     475
+relax     469
+
+[1] Engineering features...
+  Total features: 30
+
+[2] Labels encoded: {0: 'focus', 1: 'relax', 2: 'sudoku'}
+
+[3] Balancing classes via oversampling...
+  Balanced: 1554 total samples (518 per class)
+
+[4] Cross-validating Random Forest baseline (5-fold, real distribution)...
+  Random Forest           0.6027 +/- 0.0443   folds: [0.519, 0.604, 0.644, 0.613, 0.634]
+
+[5] Tuning Random Forest via GridSearchCV...
+  Best params : {'max_depth': 10, 'max_features': 'sqrt', 'min_samples_leaf': 1, 'n_estimators': 500}
+  Best CV acc : 0.6047
+
+[6] Training final Random Forest on balanced data...
+  Final RF CV  0.6047 +/- 0.0354   folds: [0.539, 0.614, 0.644, 0.603, 0.623]
+
+[7] Final evaluation on original (unbalanced) data:
+
+              precision    recall  f1-score   support
+
+       focus       0.84      0.84      0.84       475
+       relax       0.86      0.83      0.84       469
+      sudoku       0.81      0.84      0.82       518
+
+    accuracy                           0.84      1462
+   macro avg       0.84      0.84      0.84      1462
+weighted avg       0.84      0.84      0.84      1462
+
+Confusion Matrix (rows=actual, cols=predicted):
+        focus  relax  sudoku
+focus     401     20      54
+relax      33    387      49
+sudoku     44     41     433
+
+[8] Top 15 features by importance:
+   1. Rel_Low_Beta                 0.0621
+   2. Rel_High_Beta                0.0473
+   3. Log_High_Beta                0.0425
+   4. Beta_Alpha_Ratio             0.0417
+   5. High_Beta                    0.0415
+   6. Gamma_Ratio                  0.0415
+   7. Low_Gamma                    0.0406
+   8. Log_Low_Gamma                0.0382
+   9. Rel_Low_Gamma                0.0369
+  10. Total_Power                  0.0357
+  11. Delta                        0.0344
+  12. Log_Delta                    0.0333
+  13. Slow_Fast_Ratio              0.0329
+  14. Rel_Delta                    0.0323
+  15. Rel_Mid_Gamma                0.0323
+
+[9] Saving artifacts...
