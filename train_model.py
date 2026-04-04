@@ -44,9 +44,9 @@ def log(msg=""):
     lines.append(str(msg))
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # 1. LOAD DATA
-# ══════════════════════════════════════════════════════════════════════════════
+
 log("=" * 65)
 log("  MindTune EEG Classifier — Training")
 log("=" * 65)
@@ -66,9 +66,9 @@ log(f"\n  Total rows : {len(data)}")
 log(f"  Class counts:\n{data['Mind_State'].value_counts().to_string()}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # 2. FEATURE ENGINEERING
-# ══════════════════════════════════════════════════════════════════════════════
+
 log("\n[1] Engineering features...")
 
 def engineer_features(df):
@@ -107,18 +107,18 @@ feat_names = features.columns.tolist()
 log(f"  Total features: {len(feat_names)}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # 3. ENCODE LABELS
-# ══════════════════════════════════════════════════════════════════════════════
+
 le = LabelEncoder()
 y  = le.fit_transform(data["Mind_State"])
 X  = features.values
 log(f"\n[2] Labels encoded: {dict(enumerate(le.classes_))}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # 4. BALANCE CLASSES
-# ══════════════════════════════════════════════════════════════════════════════
+
 log("\n[3] Balancing classes via oversampling...")
 
 X_df, y_s = pd.DataFrame(X), pd.Series(y)
@@ -134,17 +134,17 @@ y_bal = pd.concat(yp).values
 log(f"  Balanced: {len(y_bal)} total samples ({max_count} per class)")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # 5. SCALE
-# ══════════════════════════════════════════════════════════════════════════════
+
 scaler        = StandardScaler()
 X_scaled      = scaler.fit_transform(X_bal)
 X_orig_scaled = scaler.transform(X)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # 6. CROSS-VALIDATE RANDOM FOREST (baseline)
-# ══════════════════════════════════════════════════════════════════════════════
+
 log("\n[4] Cross-validating Random Forest baseline (5-fold, real distribution)...")
 
 cv = StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=RANDOM_STATE)
@@ -155,9 +155,9 @@ scores = cross_val_score(rf, X_orig_scaled, y, cv=cv, scoring="accuracy", n_jobs
 log(f"  {'Random Forest':<22}  {scores.mean():.4f} +/- {scores.std():.4f}   folds: {scores.round(3).tolist()}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # 7. HYPERPARAMETER TUNING
-# ══════════════════════════════════════════════════════════════════════════════
+
 log("\n[5] Tuning Random Forest via GridSearchCV...")
 
 param_grid = {
@@ -176,9 +176,9 @@ log(f"  Best CV acc : {grid_rf.best_score_:.4f}")
 best_rf = grid_rf.best_estimator_
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # 8. TRAIN FINAL MODEL ON FULL BALANCED DATA
-# ══════════════════════════════════════════════════════════════════════════════
+
 log("\n[6] Training final Random Forest on balanced data...")
 
 best_rf.fit(X_scaled, y_bal)
@@ -186,9 +186,9 @@ final_scores = cross_val_score(best_rf, X_orig_scaled, y, cv=cv, scoring="accura
 log(f"  Final RF CV  {final_scores.mean():.4f} +/- {final_scores.std():.4f}   folds: {final_scores.round(3).tolist()}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # 9. FINAL EVALUATION
-# ══════════════════════════════════════════════════════════════════════════════
+
 log("\n[7] Final evaluation on original (unbalanced) data:")
 y_pred = best_rf.predict(X_orig_scaled)
 log("\n" + classification_report(y, y_pred, target_names=le.classes_))
@@ -203,9 +203,9 @@ for rank, i in enumerate(top_idx, 1):
     log(f"  {rank:>2}. {feat_names[i]:<28} {feat_imp[i]:.4f}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+
 # 10. SAVE
-# ══════════════════════════════════════════════════════════════════════════════
+
 log("\n[9] Saving artifacts...")
 joblib.dump(best_rf,    os.path.join(MODEL_DIR, "mindtune_model.pkl"))
 joblib.dump(scaler,     os.path.join(MODEL_DIR, "mindtune_scaler.pkl"))
